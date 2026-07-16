@@ -19,9 +19,6 @@ const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
     }
   };
 
-  const descriptionPreview = task.description
-    ? (task.description.length > 120 ? task.description.substring(0, 120) + '...' : task.description)
-    : '';
 
   return (
     <div className="bg-bg-card border border-border/60 rounded-2xl p-6 flex flex-col gap-4 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_30px_-5px_rgba(0,0,0,0.3)] hover:border-border-light hover:-translate-y-1 transition-all duration-300 ease-out cursor-default">
@@ -46,8 +43,8 @@ const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
       </div>
 
       {/* Description */}
-      {descriptionPreview && (
-        <p className="text-[14px] text-text-muted leading-relaxed">{descriptionPreview}</p>
+      {task.description && (
+        <p className="text-[14px] text-text-muted leading-relaxed">{task.description}</p>
       )}
 
       {/* Meta row */}
@@ -63,11 +60,9 @@ const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
               Posted: {new Date(task.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
             </span>
           )}
-          {task.dueDate && (
-            <span className="text-[12px] text-text-faint font-medium">
-              Due: {task.dueDate}
-            </span>
-          )}
+          <span className="text-[12px] text-text-faint font-medium">
+            {task.dueDate ? `Due: ${task.dueDate}` : 'No due date'}
+          </span>
         </div>
         {task.createdBy?.name && (
           <span className="text-[12px] text-text-faint font-medium">By {task.createdBy.name}</span>
