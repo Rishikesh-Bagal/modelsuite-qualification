@@ -26,25 +26,42 @@ const AdminDashboard = () => {
   const [editTask, setEditTask]     = useState(null);
   const [search, setSearch]         = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
+  
+  // Pagination & Stats State
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [pagination, setPagination] = useState(null);
+  const [stats, setStats] = useState({ total: 0, open: 0, submitted: 0, approved: 0 });
 
   const loadTasks = async () => {
     try {
-      const { data } = await fetchAllTasks();
-      setTasks(data);
+      const { data } = await fetchAllTasks({ page, limit, search, status: statusFilter });
+      setTasks(data.tasks || []);
+      if (data.page) {
+        setPagination({
+          page: data.page,
+          totalPages: data.totalPages,
+          totalItems: data.totalItems,
+          hasNextPage: data.hasNextPage,
+          hasPreviousPage: data.hasPreviousPage
+        });
+        setStats(data.stats);
+      } else {
+        // Fallback if backend isn't returning pagination (shouldn't happen with our update)
+        setPagination(null);
+      }
     } catch {
       alert('Failed to load tasks');
     }
   };
 
   // eslint-disable-next-line
-  useEffect(() => { loadTasks(); }, []);
-
-  const stats = {
-    total:     tasks.length,
-    open:      tasks.filter((t) => t.status === 'Open').length,
-    submitted: tasks.filter((t) => t.status === 'Submitted').length,
-    approved:  tasks.filter((t) => t.status === 'Approved').length,
-  };
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      loadTasks();
+    }, 300);
+    return () => clearTimeout(delay);
+  }, [page, search, statusFilter]);
 
   const statCards = [
     { label: 'Total Tasks', value: stats.total,     colorClass: 'stat-card-default', valueColor: '#E5E2E1' },
@@ -52,15 +69,6 @@ const AdminDashboard = () => {
     { label: 'Submitted',   value: stats.submitted, colorClass: 'stat-card-info',    valueColor: '#60A5FA' },
     { label: 'Approved',    value: stats.approved,  colorClass: 'stat-card-green',   valueColor: '#34D399' },
   ];
-
-  /* Filter tasks */
-  const filteredTasks = tasks.filter((t) => {
-    const matchSearch = !search ||
-      t.title?.toLowerCase().includes(search.toLowerCase()) ||
-      t.assignedTo?.name?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'All' || t.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
 
   return (
     <div className="flex min-h-screen" style={{ background: '#050505' }}>
@@ -120,7 +128,7 @@ const AdminDashboard = () => {
                   border: '1px solid rgba(255,255,255,0.09)',
                   fontFamily: 'Inter, sans-serif',
                 }}>
-                {filteredTasks.length} {filteredTasks.length === 1 ? 'task' : 'tasks'}
+                {pagination ? pagination.totalItems : tasks.length} task{(!pagination || pagination.totalItems !== 1) && 's'}
               </span>
             </div>
 
@@ -134,7 +142,7 @@ const AdminDashboard = () => {
                   type="text"
                   placeholder="Search tasks…"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                   className="search-input-glass"
                   style={{ minWidth: '180px' }}
                 />
@@ -143,7 +151,7 @@ const AdminDashboard = () => {
               {/* Status filter */}
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
                 className="search-input-glass custom-select"
                 style={{ paddingLeft: '12px', cursor: 'pointer' }}>
                 <option value="All">All Status</option>
@@ -156,7 +164,35 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <TasksTable tasks={filteredTasks} onEdit={setEditTask} onRefresh={loadTasks} />
+          <TasksTable tasks={tasks} onEdit={setEditTask} onRefresh={loadTasks} />
+
+          {/* Pagination Controls */}
+          {pagination && pagination.totalPages > 0 && (
+            <div className="flex items-center justify-between mt-4 px-2">
+              <span className="text-[13px]" style={{ color: '#6B7280' }}>
+                Showing {tasks.length} of {pagination.totalItems} tasks
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  disabled={!pagination.hasPreviousPage}
+                  onClick={() => setPage(page - 1)}
+                  className="px-3 py-1.5 rounded-md text-[13px] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'rgba(255,255,255,0.05)', color: '#E5E2E1', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  Previous
+                </button>
+                <span className="text-[13px] font-medium mx-2" style={{ color: '#E5E2E1' }}>
+                  Page {pagination.page} of {pagination.totalPages}
+                </span>
+                <button
+                  disabled={!pagination.hasNextPage}
+                  onClick={() => setPage(page + 1)}
+                  className="px-3 py-1.5 rounded-md text-[13px] font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'rgba(255,255,255,0.05)', color: '#E5E2E1', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
