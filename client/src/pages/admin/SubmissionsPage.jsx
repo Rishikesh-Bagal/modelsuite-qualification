@@ -7,6 +7,7 @@ const REVIEW_STATUS_CLASS = {
   Pending:  'status-badge-Submitted',
   Approved: 'status-badge-Approved',
   Rejected: 'status-badge-Rejected',
+  'Request Revision': 'status-badge-Revision',
 };
 
 const SubmissionsPage = () => {
@@ -27,6 +28,7 @@ const SubmissionsPage = () => {
   const pending  = submissions.filter((s) => s.reviewStatus === 'Pending').length;
   const approved = submissions.filter((s) => s.reviewStatus === 'Approved').length;
   const rejected = submissions.filter((s) => s.reviewStatus === 'Rejected').length;
+  const revision = submissions.filter((s) => s.reviewStatus === 'Request Revision').length;
 
   const thCls = 'text-left px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.7px] text-text-faint border-b border-border whitespace-nowrap';
   const tdCls = 'px-5 py-4 border-b border-border align-middle';
@@ -44,12 +46,13 @@ const SubmissionsPage = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mb-7">
+        <div className="grid grid-cols-5 gap-4 mb-7">
           {[
             { label: 'Total',    value: submissions.length, color: 'text-text-primary' },
             { label: 'Pending',  value: pending,            color: 'text-info'         },
             { label: 'Approved', value: approved,           color: 'text-success'      },
             { label: 'Rejected', value: rejected,           color: 'text-danger'       },
+            { label: 'Revision', value: revision,           color: 'text-[#A855F7]'    },
           ].map(({ label, value, color }) => (
             <div key={label} className="bg-bg-card border border-border rounded-xl px-6 py-5 flex flex-col gap-2 hover:border-border-light transition-colors">
               <span className="text-[12px] font-medium text-text-muted uppercase tracking-[0.6px]">{label}</span>

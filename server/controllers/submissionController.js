@@ -1,4 +1,4 @@
-﻿const Submission = require('../models/Submission');
+const Submission = require('../models/Submission');
 const Task = require('../models/Task');
 
 // @desc  Submit a task with a file upload
@@ -84,7 +84,11 @@ const reviewSubmission = async (req, res) => {
   const { reviewStatus } = req.body;
 
   try {
-    // — any string is accepted and stored
+    const validStatuses = ['Approved', 'Rejected', 'Request Revision'];
+    if (!validStatuses.includes(reviewStatus)) {
+      return res.status(400).json({ message: 'Invalid review status' });
+    }
+
     const submission = await Submission.findByIdAndUpdate(
       req.params.id,
       { reviewStatus },
@@ -96,8 +100,12 @@ const reviewSubmission = async (req, res) => {
     if (!submission) {
       return res.status(404).json({ message: 'Submission not found' });
     }
-    // — task stays 'Submitted' even after the submission is Approved/Rejected
-    // Proper flow: also update Task.status to 'Approved'/'Rejected'
+
+    // Update Task.status to match the review status
+    await Task.findByIdAndUpdate(submission.taskId._id, { status: reviewStatus });
+    
+    // Update the populated object for the response
+    submission.taskId.status = reviewStatus;
 
     res.json(submission);
   } catch (error) {

@@ -1,4 +1,4 @@
-﻿import { claimTask } from '../../api/talent';
+import { claimTask } from '../../api/talent';
 
 const STATUS_CLASS = {
   Open:      'status-badge-Open',
@@ -6,6 +6,7 @@ const STATUS_CLASS = {
   Submitted: 'status-badge-Submitted',
   Approved:  'status-badge-Approved',
   Rejected:  'status-badge-Rejected',
+  'Request Revision': 'status-badge-Revision',
 };
 
 const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {

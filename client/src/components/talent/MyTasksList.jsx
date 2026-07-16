@@ -8,6 +8,7 @@ const STATUS_CLASS = {
   Submitted: 'status-badge-Submitted',
   Approved:  'status-badge-Approved',
   Rejected:  'status-badge-Rejected',
+  'Request Revision': 'status-badge-Revision',
 };
 
 /* ── Calendar icon ── */
@@ -82,7 +83,7 @@ const MyTasksList = ({ tasks, onRefresh }) => {
 
             {/* Actions */}
             <div className="flex items-center gap-2 shrink-0">
-              {(task.status === 'Claimed' || task.status === 'Submitted') && (
+              {(task.status === 'Claimed' || task.status === 'Submitted' || task.status === 'Request Revision') && (
                 <button
                   onClick={() => setSubmitTarget(task)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold cursor-pointer border transition-all"

@@ -1,9 +1,19 @@
-﻿import { reviewSubmission } from '../../api/submissions';
+import { reviewSubmission } from '../../api/submissions';
 
 const REVIEW_STATUS_CLASS = {
   Pending:  'status-badge-Submitted',
   Approved: 'status-badge-Approved',
   Rejected: 'status-badge-Rejected',
+  'Request Revision': 'status-badge-Revision',
+};
+
+const TASK_STATUS_CLASS = {
+  Open: 'status-badge-Open',
+  Claimed: 'status-badge-Claimed',
+  Submitted: 'status-badge-Submitted',
+  Approved: 'status-badge-Approved',
+  Rejected: 'status-badge-Rejected',
+  'Request Revision': 'status-badge-Revision',
 };
 
 const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
@@ -48,7 +58,7 @@ const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
               )}
               
               {task.status && (
-                <span className={`inline-block px-2 py-[2px] rounded-full text-[11px] font-medium status-badge-${task.status}`}>
+                <span className={`inline-block px-2 py-[2px] rounded-full text-[11px] font-medium ${TASK_STATUS_CLASS[task.status] || 'status-badge-Open'}`}>
                   {task.status}
                 </span>
               )}
@@ -104,6 +114,10 @@ const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
             <button onClick={onClose}
               className="flex-1 py-2.5 bg-bg-input text-text-muted border border-border rounded-lg text-sm font-medium cursor-pointer hover:bg-bg-hover hover:text-text-primary transition-all font-sans">
               Cancel
+            </button>
+            <button onClick={() => handleReview('Request Revision')}
+              className="flex-1 py-2.5 bg-[#A855F7]/10 text-[#A855F7] border border-[#A855F7]/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-[#A855F7]/20 transition-all font-sans">
+              ⟲ Revise
             </button>
             <button onClick={() => handleReview('Rejected')}
               className="flex-1 py-2.5 bg-danger/10 text-danger border border-danger/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-danger/20 transition-all font-sans">
