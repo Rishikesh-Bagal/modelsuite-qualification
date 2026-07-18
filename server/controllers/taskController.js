@@ -49,7 +49,7 @@ const getAllTasks = async (req, res) => {
     const allTotal = await Task.countDocuments();
     const allOpen = await Task.countDocuments({ status: 'Open' });
     const allSubmitted = await Task.countDocuments({ status: 'Submitted' });
-    const allApproved = await Task.countDocuments({ status: 'Approved' });
+    const allCompleted = await Task.countDocuments({ status: 'Completed' });
 
     res.json({
       tasks,
@@ -63,7 +63,7 @@ const getAllTasks = async (req, res) => {
         total: allTotal,
         open: allOpen,
         submitted: allSubmitted,
-        approved: allApproved,
+        completed: allCompleted,
       }
     });
   } catch (error) {

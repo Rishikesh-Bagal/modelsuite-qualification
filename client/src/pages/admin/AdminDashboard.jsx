@@ -31,7 +31,7 @@ const AdminDashboard = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [pagination, setPagination] = useState(null);
-  const [stats, setStats] = useState({ total: 0, open: 0, submitted: 0, approved: 0 });
+  const [stats, setStats] = useState({ total: 0, open: 0, submitted: 0, completed: 0 });
 
   const loadTasks = async () => {
     try {
@@ -67,7 +67,7 @@ const AdminDashboard = () => {
     { label: 'Total Tasks', value: stats.total,     colorClass: 'stat-card-default', valueColor: '#E5E2E1' },
     { label: 'Open',        value: stats.open,      colorClass: 'stat-card-blue',    valueColor: '#60A5FA' },
     { label: 'Submitted',   value: stats.submitted, colorClass: 'stat-card-info',    valueColor: '#60A5FA' },
-    { label: 'Approved',    value: stats.approved,  colorClass: 'stat-card-green',   valueColor: '#34D399' },
+    { label: 'Completed',   value: stats.completed, colorClass: 'stat-card-green',   valueColor: '#34D399' },
   ];
 
   return (
@@ -158,7 +158,7 @@ const AdminDashboard = () => {
                 <option value="Open">Open</option>
                 <option value="Claimed">Claimed</option>
                 <option value="Submitted">Submitted</option>
-                <option value="Approved">Approved</option>
+                <option value="Completed">Completed</option>
                 <option value="Rejected">Rejected</option>
               </select>
             </div>

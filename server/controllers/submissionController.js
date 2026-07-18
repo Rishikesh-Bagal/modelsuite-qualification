@@ -90,6 +90,11 @@ const reviewSubmission = async (req, res) => {
     }
     // — task stays 'Submitted' even after the submission is Approved/Rejected
     // Proper flow: also update Task.status to 'Approved'/'Rejected'
+    if (reviewStatus === 'Approved') {
+      await Task.findByIdAndUpdate(submission.taskId._id, { status: 'Completed' });
+      // Update the populated taskId status in memory to return correct data
+      submission.taskId.status = 'Completed';
+    }
 
     res.json(submission);
   } catch (error) {

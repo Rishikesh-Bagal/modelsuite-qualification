@@ -5,6 +5,7 @@ const STATUS_CLASS = {
   Claimed:   'status-badge-Claimed',
   Submitted: 'status-badge-Submitted',
   Approved:  'status-badge-Approved',
+  Completed: 'status-badge-Completed',
   Rejected:  'status-badge-Rejected',
 };
 
