@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Sidebar from '../../components/admin/Sidebar';
 import TasksTable from '../../components/admin/TasksTable';
 import CreateTaskModal from '../../components/admin/CreateTaskModal';
@@ -33,7 +33,7 @@ const AdminDashboard = () => {
   const [pagination, setPagination] = useState(null);
   const [stats, setStats] = useState({ total: 0, open: 0, submitted: 0, completed: 0 });
 
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     try {
       const { data } = await fetchAllTasks({ page, limit, search, status: statusFilter });
       setTasks(data.tasks || []);
@@ -53,15 +53,14 @@ const AdminDashboard = () => {
     } catch {
       alert('Failed to load tasks');
     }
-  };
+  }, [page, limit, search, statusFilter]);
 
-  // eslint-disable-next-line
   useEffect(() => {
     const delay = setTimeout(() => {
       loadTasks();
     }, 300);
     return () => clearTimeout(delay);
-  }, [page, search, statusFilter]);
+  }, [loadTasks]);
 
   const statCards = [
     { label: 'Total Tasks', value: stats.total,     colorClass: 'stat-card-default', valueColor: '#E5E2E1' },
